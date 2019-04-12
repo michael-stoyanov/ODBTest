@@ -159,10 +159,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(this, "Scanning .....", Toast.LENGTH_LONG).show();
     }
 
+    private Socket clientSocket;
+    OutputStream out;
+    InputStream in;
+
     @Override
     public void onClick(View btn) {
-        ClientClass client;
-        VinCommand vinCommand = new VinCommand();
 //        final Socket clientSocket;
 //        final OutputStream out;
 //        final InputStream in;
@@ -197,31 +199,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         public void run() {
                             try {
 
-                                Socket clientSocket = new Socket(IPaddress, 35000);
+                                clientSocket = new Socket(IPaddress, 35000);
+                                Toast.makeText(getApplicationContext(), "Initializing socket", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), Boolean.toString(clientSocket.isConnected()), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "port: " + clientSocket.getPort(), Toast.LENGTH_LONG).show();
 
                                 OutputStream out = clientSocket.getOutputStream();
                                 InputStream in = clientSocket.getInputStream();
-
-                                VinCommand vinCommand = new VinCommand();
-
-                                vinCommand.run(in, out);
-
-                                Toast.makeText(getApplicationContext(), vinCommand.getResult(), Toast.LENGTH_LONG).show();
 
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                     }).start();
-//
-//                    client.stopConnection();
 
-                    /*
-                    client = new ClientClass();
-                    client.start();
-                    client.startDefaultConnection();
-*/
+                    Toast.makeText(getApplicationContext(), "Initializing and running vincommand.", Toast.LENGTH_LONG).show();
 
+                    VinCommand vinCommand = new VinCommand();
+                    Toast.makeText(getApplicationContext(), vinCommand.getResult(), Toast.LENGTH_LONG).show();
+
+                    vinCommand.run(in, out);
 
                     break;
                 case R.id.hardcodedVin:
