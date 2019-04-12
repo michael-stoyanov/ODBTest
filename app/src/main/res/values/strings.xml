@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">OBDtest</string>
+    <string name="action_settings">Settings</string>
+    <string name="wifi_connect">Enable WiFi</string>
+    <string name="wifi_devices">Search devices</string>
+    <string name="get_Hotspot_IpAddress">Hotspot IpAddress</string>
+    <string name="get_device_IpAddress">Device IpAddress</string>
+    <string name="hardcodedVinNo">Hardcoded Vin</string>
+    <string name="vinNo">Get Vin</string>
+    <string name="VLink">V-Link</string>
+
+</resources>

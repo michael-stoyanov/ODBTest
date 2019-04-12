@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?android:attr/actionBarSize"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".MainActivity"
+    tools:showIn="@layout/activity_main">
+
+    <TextView
+        android:id="@+id/result_text"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:hint="Command result" />
+
+    <!--<Button-->
+        <!--android:id="@+id/wifi_enable"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/result_text"-->
+        <!--android:text="@string/wifi_connect" />-->
+
+    <Button
+        android:id="@+id/wifi_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/result_text"
+        android:text="@string/wifi_devices" />
+
+    <Button
+        android:id="@+id/VLinkConnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/wifi_search"
+        android:layout_toRightOf="@+id/wifi_search"
+        android:layout_below="@id/result_text"
+        android:text="@string/VLink" />
+
+    <Button
+        android:id="@+id/getMyIpAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wifi_search"
+        android:text="@string/get_device_IpAddress" />
+
+    <Button
+        android:id="@+id/getHotspotIpAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/getMyIpAddress"
+        android:layout_toRightOf="@+id/getMyIpAddress"
+        android:layout_below="@id/wifi_search"
+        android:text="@string/get_Hotspot_IpAddress" />
+
+    <Button
+        android:id="@+id/sendVinNoCommand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/getMyIpAddress"
+        android:text="@string/vinNo" />
+
+    <Button
+        android:id="@+id/hardcodedVin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/getMyIpAddress"
+        android:layout_toEndOf="@+id/sendVinNoCommand"
+        android:layout_toRightOf="@+id/sendVinNoCommand"
+        android:text="@string/hardcodedVinNo" />
+
+    <ListView
+        android:id="@+id/wifi_networks_listView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary" />
+</RelativeLayout>
