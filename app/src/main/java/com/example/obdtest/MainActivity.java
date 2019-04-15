@@ -7,11 +7,10 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.util.LogWriter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Formatter;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +21,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.obdtest.commands.ObdCommand;
 import com.example.obdtest.commands.control.VinCommand;
+import com.example.obdtest.commands.engine.RPMCommand;
+import com.example.obdtest.commands.engine.ThrottlePositionCommand;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +34,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     WifiManager wifiManager;
     WifiConfiguration wifiConfig;
@@ -51,9 +53,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     List<ScanResult> scanResultList;
 
     String IPaddress;
-    LogWriter logWriter;
 
-    String TAG = "OBD test";
+    public String result;
+    BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            scanResultList = wifiManager.getScanResults();
+            String deviceArray[] = new String[scanResultList.size()];
+
+            for (int i = 0; i < scanResultList.size(); i++) {
+                deviceArray[i] = scanResultList.get(i).SSID;
+            }
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, deviceArray);
+
+            networks.setAdapter(adapter);
+            networks.setVisibility(View.VISIBLE);
+
+            unregisterReceiver(this);
+        }
+    };
+    private ClientClass client;
+    private Socket clientSocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,27 +152,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            scanResultList = wifiManager.getScanResults();
-            String deviceArray[] = new String[scanResultList.size()];
-
-            for (int i = 0; i < scanResultList.size(); i++) {
-                deviceArray[i] = scanResultList.get(i).SSID;
-            }
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, deviceArray);
-
-            networks.setAdapter(adapter);
-            networks.setVisibility(View.VISIBLE);
-
-            unregisterReceiver(this);
-        }
-    };
-
-
     @SuppressWarnings("deprecation")
     public void scanWifi() {
         registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
@@ -159,16 +160,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(this, "Scanning .....", Toast.LENGTH_LONG).show();
     }
 
-    private Socket clientSocket;
-    OutputStream out;
-    InputStream in;
+//    StringBuilder res = new StringBuilder();
+//
+//    private static Pattern WHITESPACE_PATTERN = Pattern.compile("\\s");
+//    private static Pattern BUSINIT_PATTERN = Pattern.compile("(BUS INIT)|(BUSINIT)|(\\.)");
+//    private static Pattern SEARCHING_PATTERN = Pattern.compile("SEARCHING");
+//    private static Pattern DIGITS_LETTERS_PATTERN = Pattern.compile("([0-9A-F])+");
+//
+//    protected String removeAll(Pattern pattern, String input) {
+//        return pattern.matcher(input).replaceAll("");
+//    }
+//
+//    protected ArrayList<Integer> buffer = null;
+//    protected String cmd = "010C";
+//    protected boolean useImperialUnits = false;
+//    protected String rawData = null;
+//    protected Long responseDelayInMs = null;
+//    private long start;
+//    private long end;
+
+    int Port;
 
     @Override
     public void onClick(View btn) {
-//        final Socket clientSocket;
-//        final OutputStream out;
-//        final InputStream in;
-
         try {
             switch (btn.getId()) {
 //                case R.id.wifi_enable:
@@ -177,82 +191,205 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                        wifiManager.setWifiEnabled(true);
 //                    }
 //                    break;
-                case R.id.wifi_search:
-                    networks = (ListView) findViewById(R.id.wifi_networks_listView);
-                    scanWifi();
-                    break;
-                case R.id.VLinkConnect:
-                    VLinkConnect();
-                    break;
+//                case R.id.wifi_search:
+//                    networks = (ListView) findViewById(R.id.wifi_networks_listView);
+//                    scanWifi();
+//                    break;
+//                case R.id.VLinkConnect:
+//                    VLinkConnect();
+//                    break;
                 case R.id.getMyIpAddress:
-                    IPaddress = GetDeviceIpWiFiData();
-                    result_text.setText(IPaddress);
+//                    IPaddress = GetDeviceIpWiFiData();
+//                    result_text.setText(IPaddress);
+
                     break;
                 case R.id.getHotspotIpAddress:
                     IPaddress = intToInetAddress(wifiManager.getDhcpInfo().serverAddress).getHostAddress();
                     result_text.setText(IPaddress);
                     break;
                 case R.id.sendVinNoCommand:
-                    new Thread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            try {
-
-                                clientSocket = new Socket(IPaddress, 35000);
-                                Toast.makeText(getApplicationContext(), "Initializing socket", Toast.LENGTH_LONG).show();
-                                Toast.makeText(getApplicationContext(), Boolean.toString(clientSocket.isConnected()), Toast.LENGTH_LONG).show();
-                                Toast.makeText(getApplicationContext(), "port: " + clientSocket.getPort(), Toast.LENGTH_LONG).show();
-
-                                OutputStream out = clientSocket.getOutputStream();
-                                InputStream in = clientSocket.getInputStream();
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }).start();
-
-                    Toast.makeText(getApplicationContext(), "Initializing and running vincommand.", Toast.LENGTH_LONG).show();
-
-                    VinCommand vinCommand = new VinCommand();
-                    Toast.makeText(getApplicationContext(), vinCommand.getResult(), Toast.LENGTH_LONG).show();
-
-                    vinCommand.run(in, out);
-
                     break;
                 case R.id.hardcodedVin:
-                    new Thread(new Runnable() {
+                    try {
 
-                        @Override
-                        public void run() {
-                            try {
+                        final AsyncTask task = new ClientClass(new ThrottlePositionCommand(), new ClientClass.ObdCommandResponse() {
+                            @Override
+                            public void getObdFormattedResponse(String response) {
+                                result_text.setText(response);
 
-                                Socket clientSocket = new Socket("192.168.0.10", 35000);
-
-                                OutputStream out = clientSocket.getOutputStream();
-                                InputStream in = clientSocket.getInputStream();
-
-                                VinCommand vinCommand = new VinCommand();
-
-                                vinCommand.run(in, out);
-
-                                Toast.makeText(getApplicationContext(), vinCommand.getResult(), Toast.LENGTH_LONG).show();
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
-                        }
-                    }).start();
+                        }).execute();
 
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+//                                if (clientSocket == null || !clientSocket.isConnected())
+//                                    clientSocket = new Socket("192.168.0.10", 35000);
+//
+//                                OutputStream out = clientSocket.getOutputStream();
+//                                InputStream in = clientSocket.getInputStream();
+//
+//                                cmd = "01 11";
+//                                sendCommand(out);
+//                                buffer = new ArrayList<>();
+//                                result = readRawData(in);
+//                                fillBuffer();
+//                                //buffer = result.substring(result.indexOf("\r"));
+//                                //int km = buffer.get(2) * 256 + buffer.get(3);
+//                                //int rpm = (buffer.get(2) * 256 + buffer.get(3)) / 4;
+//
+//                                cmd = "AT DPN";
+//                                cmd = "AT DPN";
                     break;
                 default:
                     break;
             }
         } catch (Exception e) {
+//            result_text.setTexext(e.getMessage());
             Toast.makeText(this, "Better luck next time!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    //    protected void readResult(InputStream in) throws IOException {
+//        readRawData(in);
+//        checkForErrors();
+//        fillBuffer();
+//        performCalculations();
+//    }
+//
+//    private final Class[] ERROR_CLASSES = {
+//            UnableToConnectException.class,
+//            BusInitException.class,
+//            MisunderstoodCommandException.class,
+//            NoDataException.class,
+//            StoppedException.class,
+//            UnknownErrorException.class,
+//            UnsupportedCommandException.class
+//    };
+//
+//    void checkForErrors() {
+//        for (Class<? extends ResponseException> errorClass : ERROR_CLASSES) {
+//            ResponseException messageError;
+//
+//            try {
+//                messageError = errorClass.newInstance();
+//                messageError.setCommand(this.cmd);
+//            } catch (InstantiationException e) {
+//                throw new RuntimeException(e);
+//            } catch (IllegalAccessException e) {
+//                throw new RuntimeException(e);
+//            }
+//
+//            if (messageError.isError(rawData)) {
+//                throw messageError;
+//            }
+//        }
+//    }
+//
+//    protected void sendCommand(OutputStream out) throws IOException,
+//            InterruptedException {
+//        // write to OutputStream (i.e.: a BluetoothSocket) with an added
+//        // Carriage return
+//        out.write((cmd + "\r").getBytes());
+//        out.flush();
+//        if (responseDelayInMs != null && responseDelayInMs > 0) {
+//            Thread.sleep(responseDelayInMs);
+//        }
+//    }
+//
+//    protected void fillBuffer() {
+//        rawData = removeAll(WHITESPACE_PATTERN, rawData); //removes all [ \t\n\x0B\f\r]
+//        rawData = removeAll(BUSINIT_PATTERN, rawData);
+//
+//        if (!DIGITS_LETTERS_PATTERN.matcher(rawData).matches()) {
+//            throw new NonNumericResponseException(rawData);
+//        }
+//
+//        // read string each two chars
+//        //buffer.clear();
+//        int begin = 0;
+//        int end = 2;
+//        while (end <= rawData.length()) {
+//            buffer.add(Integer.decode("0x" + rawData.substring(begin, end)));
+//            begin = end;
+//            end += 2;
+//        }
+//    }
+//
+//    protected void performCalculations() {
+//        result = rawData;
+//        String workingData;
+//        if (result.contains(":")) {//CAN(ISO-15765) protocol.
+//            workingData = result.replaceAll(".:", "").substring(9);//9 is xxx490201, xxx is bytes of information to follow.
+//            Matcher m = Pattern.compile("[^a-z0-9 ]", Pattern.CASE_INSENSITIVE).matcher(convertHexToString(workingData));
+//            if (m.find()) workingData = result.replaceAll("0:49", "").replaceAll(".:", "");
+//        } else {//ISO9141-2, KWP2000 Fast and KWP2000 5Kbps (ISO15031) protocols.
+//            workingData = result.replaceAll("49020.", "");
+//        }
+//        result = convertHexToString(workingData).replaceAll("[\u0000-\u001f]", "");
+//    }
+//
+//    protected String readRawData(InputStream in) throws IOException {
+//        byte b;
+//        StringBuilder res = new StringBuilder();
+//
+//        // read until '>' arrives OR end of stream reached (and skip ' ')
+//        char c;
+//        while (true) {
+//            b = (byte) in.read();
+//            if (b == -1) // -1 if the end of the stream is reached
+//            {
+//                break;
+//            }
+//            c = (char) b;
+//            if (c == '>') // read until '>' arrives
+//            {
+//                break;
+//            }
+//            if (c != ' ') // skip ' '
+//            {
+//                res.append(c);
+//            }
+//        }
+//
+//        rawData = res.toString().trim();
+//        return rawData;
+//    }
+//
+//    //    protected void readRawData(InputStream in) throws IOException {
+//        byte b = 0;
+//
+//        // read until '>' arrives OR end of stream reached
+//        char c;
+//        // -1 if the end of the stream is reached
+//        while (((b = (byte) in.read()) > -1)) {
+//            c = (char) b;
+//            if (c == '>') // read until '>' arrives
+//            {
+//                break;
+//            }
+//            res.append(c);
+//        }
+//
+//        rawData = removeAll(SEARCHING_PATTERN, res.toString());
+//
+//    }
+//
+//    public String convertHexToString(String hex) {
+//        StringBuilder sb = new StringBuilder();
+//        //49204c6f7665204a617661 split into two characters 49, 20, 4c...
+//        for (int i = 0; i < hex.length() - 1; i += 2) {
+//
+//            //grab the hex in pairs
+//            String output = hex.substring(i, (i + 2));
+//            //convert hex to decimal
+//            int decimal = Integer.parseInt(output, 16);
+//            //convert the decimal to character
+//            sb.append((char) decimal);
+//        }
+//        return sb.toString();
+//    }
+//
 
     public InetAddress intToInetAddress(int hostAddress) {
         byte[] addressBytes = {(byte) (0xff & hostAddress),
@@ -289,64 +426,88 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return super.onOptionsItemSelected(item);
     }
 
-    public String GetDeviceIpWiFiData() {
-        @SuppressWarnings("deprecation")
-
-        String ip = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
-        return ip;
-    }
-
-    public class ClientClass extends Thread {
-
-        private Socket clientSocket;
-        private OutputStream out;
-        private InputStream in;
-
-        public void startDefaultConnection() {
-            try {
-                clientSocket = new Socket("192.168.0.10", 35000);
-
-                out = clientSocket.getOutputStream();
-                in = clientSocket.getInputStream();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void startConnection(String ip, int port) {
-            try {
-                clientSocket = new Socket(ip, port);
-
-                out = clientSocket.getOutputStream();
-                in = clientSocket.getInputStream();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-//        public String sendMessage(String msg) {
-//            //out.write(msg.getBytes());
-//            String resp = null;
+    //
+//    public String GetDeviceIpWiFiData() {
+//        @SuppressWarnings("deprecation")
+//
+//        String ip = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
+//        return ip;
+//    }
+//
+//    public class ClientClass extends Thread {
+//
+//        private Socket clientSocket;
+//        private OutputStream out;
+//        private InputStream in;
+//
+//        public void startDefaultConnection() {
 //            try {
-//                resp = in.readLine();
-//                result_text.setText(resp);
+//                clientSocket = new Socket(IPaddress, 35000);
+////                clientSocket = new Socket("192.168.0.10", 35000);
+//
+//                out = clientSocket.getOutputStream();
+//                in = clientSocket.getInputStream();
 //
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
-//            return resp;
 //        }
-
-        public void stopConnection() {
-            try {
-                in.close();
-                out.close();
-                clientSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+//
+//        public void rpmCommand() {
+//            try {
+//
+//                RPMCommand rpmCommand = new RPMCommand();
+//                rpmCommand.run(in, out);
+//                result = rpmCommand.getFormattedResult();
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        public void throttleCommand() {
+//            try {
+//
+//                ThrottlePositionCommand throttleCommand = new ThrottlePositionCommand();
+//                throttleCommand.run(in, out);
+//                result = throttleCommand.getFormattedResult();
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        public void stopConnection() {
+//            try {
+//                in.close();
+//                out.close();
+//                clientSocket.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        @Override
+//        public synchronized void start() {
+//            super.start();
+//        }
+//
+//        @Override
+//        public void run() {
+//            try {
+//                clientSocket = new Socket(IPaddress, 35000);
+////                clientSocket = new Socket("192.168.0.10", 35000);
+//
+//                out = clientSocket.getOutputStream();
+//                in = clientSocket.getInputStream();
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 }

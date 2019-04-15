@@ -19,7 +19,7 @@ import com.example.obdtest.commands.SystemOfUnits;
  * Abstract temperature command.
  *
  */
-public abstract class TemperatureCommand extends ObdCommand implements
+public abstract class  TemperatureCommand extends ObdCommand implements
         SystemOfUnits {
 
     private float temperature = 0.0f;
