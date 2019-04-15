@@ -23,53 +23,52 @@
         <!--android:layout_below="@id/result_text"-->
         <!--android:text="@string/wifi_connect" />-->
 
+    <!--<Button-->
+        <!--android:id="@+id/wifi_search"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/result_text"-->
+        <!--android:text="@string/wifi_devices" />-->
     <Button
-        android:id="@+id/wifi_search"
+        android:id="@+id/vinNo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/result_text"
-        android:text="@string/wifi_devices" />
+        android:text="@string/getVinNo" />
 
     <Button
-        android:id="@+id/VLinkConnect"
+        android:id="@+id/throttlePos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/wifi_search"
-        android:layout_toRightOf="@+id/wifi_search"
+        android:layout_toEndOf="@+id/vinNo"
+        android:layout_toRightOf="@+id/vinNo"
         android:layout_below="@id/result_text"
-        android:text="@string/VLink" />
+        android:text="@string/throttlePos" />
 
     <Button
-        android:id="@+id/getMyIpAddress"
+        android:id="@+id/currVoltage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/wifi_search"
-        android:text="@string/get_device_IpAddress" />
+        android:layout_toEndOf="@+id/throttlePos"
+        android:layout_toRightOf="@+id/throttlePos"
+        android:layout_below="@id/result_text"
+        android:text="@string/currVoltage" />
 
     <Button
-        android:id="@+id/getHotspotIpAddress"
+        android:id="@+id/oilTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/getMyIpAddress"
-        android:layout_toRightOf="@+id/getMyIpAddress"
-        android:layout_below="@id/wifi_search"
-        android:text="@string/get_Hotspot_IpAddress" />
+        android:layout_toEndOf="@+id/currVoltage"
+        android:layout_toRightOf="@+id/currVoltage"
+        android:layout_below="@id/result_text"
+        android:text="@string/oilTemp" />
 
     <Button
-        android:id="@+id/sendVinNoCommand"
+        android:id="@+id/rpm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/getMyIpAddress"
-        android:text="@string/vinNo" />
-
-    <Button
-        android:id="@+id/hardcodedVin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/getMyIpAddress"
-        android:layout_toEndOf="@+id/sendVinNoCommand"
-        android:layout_toRightOf="@+id/sendVinNoCommand"
-        android:text="@string/hardcodedVinNo" />
+        android:layout_below="@+id/vinNo"
+        android:text="@string/rpm" />
 
     <ListView
         android:id="@+id/wifi_networks_listView"

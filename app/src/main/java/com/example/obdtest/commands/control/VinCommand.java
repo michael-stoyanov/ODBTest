@@ -98,6 +98,7 @@ public class VinCommand extends PersistentCommand {
             //convert the decimal to character
             sb.append((char) decimal);
         }
+
         return sb.toString();
     }
 }

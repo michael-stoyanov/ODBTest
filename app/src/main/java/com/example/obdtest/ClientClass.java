@@ -19,6 +19,9 @@ public class ClientClass extends AsyncTask<Void, Void, String> {
     private ObdCommandResponse obdResponse = null;
     private ObdCommand command;
 
+    ClientClass(){
+    }
+
     ClientClass(ObdCommand command,ObdCommandResponse obdCommandResponse)
     {
         this.obdResponse = obdCommandResponse;
@@ -36,6 +39,7 @@ public class ClientClass extends AsyncTask<Void, Void, String> {
             command.run(mBufferIn, mBufferOut);
 
             return command.getFormattedResult();
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
