@@ -13,9 +13,6 @@ public class ClientClass extends AsyncTask<Void, Void, String> {
 
 
     public interface ObdCommandResponse{
-        public String rawResponse = null;
-        public String formattedResponse = null;
-
         void getObdFormattedResponse(String response);
     }
 
