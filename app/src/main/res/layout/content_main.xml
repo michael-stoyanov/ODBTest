@@ -10,11 +10,20 @@
     tools:showIn="@layout/activity_main">
 
     <TextView
-        android:id="@+id/result_text"
+        android:id="@+id/result_raw_text"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginTop="@dimen/fab_margin"
+        android:hint="Command raw result" />
+
+    <TextView
+        android:id="@+id/result_text"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_below="@+id/result_raw_text"
+        android:layout_marginTop="@dimen/fab_margin"
         android:hint="Command result" />
+
 
     <!--<Button-->
         <!--android:id="@+id/wifi_enable"-->

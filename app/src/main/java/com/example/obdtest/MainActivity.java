@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //    ListView networks;
     TextView result_text;
+    TextView result_raw_text;
 
     //Button wifiManager_enable;
     //Button wifiManager_scan;
@@ -52,11 +53,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     List<ScanResult> scanResultList;
 
-    ClientClass client;
-    Socket clientSocket;
     AsyncTask task;
 
-    public String result;
     BroadcastReceiver wifiReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -89,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         result_text = (TextView) findViewById(R.id.result_text);
+        result_raw_text = (TextView) findViewById(R.id.result_raw_text);
 //        networks = (ListView) findViewById(R.id.wifi_networks_listView);
 //        networks.setVisibility(View.INVISIBLE);
 
@@ -179,17 +178,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    networks = (ListView) findViewById(R.id.wifi_networks_listView);
 //                    scanWifi();
 //                    break;
-//                case R.id.VLinkConnect:
-//                    VLinkConnect();
-//                    break;
-//                case R.id.currVoltageCommand:
-//                    break;
                 case R.id.vinNo:
                     try {
                         task = new ClientClass(new VinCommand(), new ClientClass.ObdCommandResponse() {
                             @Override
                             public void getObdFormattedResponse(String response) {
                                 result_text.setText(response);
+                            }
+
+                            @Override
+                            public void getObdRawResponse(String response) {
+                                result_raw_text.setText(response);
                             }
                         }).execute();
 
@@ -206,6 +205,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             public void getObdFormattedResponse(String response) {
                                 result_text.setText(response);
                             }
+
+                            @Override
+                            public void getObdRawResponse(String response) {
+                                result_raw_text.setText(response);
+                            }
                         }).execute();
 
                     } catch (Exception e) {
@@ -218,6 +222,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void getObdFormattedResponse(String response) {
                                 result_text.setText(response);
+                            }
+
+                            @Override
+                            public void getObdRawResponse(String response) {
+                                result_raw_text.setText(response);
                             }
                         }).execute();
 
@@ -232,6 +241,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             public void getObdFormattedResponse(String response) {
                                 result_text.setText(response);
                             }
+
+                            @Override
+                            public void getObdRawResponse(String response) {
+                                result_raw_text.setText(response);
+                            }
                         }).execute();
 
                     } catch (Exception e) {
@@ -245,8 +259,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             public void getObdFormattedResponse(String response) {
                                 result_text.setText(response);
                             }
-                        }).execute();
 
+                            @Override
+                            public void getObdRawResponse(String response) {
+                                result_raw_text.setText(response);
+                            }
+
+                        }).execute();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -257,6 +276,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
             Toast.makeText(this, "Something went wrong! Better luck next time!", Toast.LENGTH_SHORT).show();
         }
+
+        task.cancel(true);
     }
 
     public InetAddress intToInetAddress(int hostAddress) {

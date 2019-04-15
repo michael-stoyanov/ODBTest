@@ -9,49 +9,54 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-public class ClientClass extends AsyncTask<Void, Void, String> {
+public class ClientClass extends AsyncTask<Void, Void, Void> {
 
 
-    public interface ObdCommandResponse{
+    public interface ObdCommandResponse {
         void getObdFormattedResponse(String response);
+        void getObdRawResponse(String response);
     }
 
     private ObdCommandResponse obdResponse = null;
     private ObdCommand command;
+    private Socket socket;
 
-    ClientClass(){
+    ClientClass() {
     }
 
-    ClientClass(ObdCommand command,ObdCommandResponse obdCommandResponse)
-    {
+    ClientClass(ObdCommand command, ObdCommandResponse obdCommandResponse) {
         this.obdResponse = obdCommandResponse;
         this.command = command;
     }
 
     @Override
-    protected String doInBackground(Void...voids) {
+    protected Void doInBackground(Void... voids) {
         try {
-            Socket socket = new Socket("192.168.0.10", 35000);
+            socket = new Socket("192.168.0.10", 35000);
 
             OutputStream mBufferOut = socket.getOutputStream();
             InputStream mBufferIn = socket.getInputStream();
 
             command.run(mBufferIn, mBufferOut);
 
-            return command.getFormattedResult();
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
         return null;
     }
 
     @Override
-    protected void onPostExecute(String response) {
-        obdResponse.getObdFormattedResponse(response);
+    protected void onCancelled() {
+        obdResponse.getObdRawResponse(command.getResult());
+        obdResponse.getObdRawResponse(command.getFormattedResult());
     }
 }
 
