@@ -52,7 +52,7 @@ public abstract class PressureCommand extends ObdCommand implements
      * @return a int.
      */
     protected int preparePressureValue() {
-        return buffer.get(2);
+        return buffer.get(buffer.size() - 1);
     }
 
     /**

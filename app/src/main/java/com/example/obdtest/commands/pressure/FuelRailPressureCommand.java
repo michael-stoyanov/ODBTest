@@ -43,9 +43,7 @@ public class FuelRailPressureCommand extends PressureCommand {
      */
     @Override
     protected final int preparePressureValue() {
-        int a = buffer.get(2);
-        int b = buffer.get(3);
-        return ((a * 256) + b) * 10;
+        return ((buffer.get(buffer.size() - 2) * 256) + buffer.get(buffer.size() - 1)) * 10;
     }
 
     /** {@inheritDoc} */

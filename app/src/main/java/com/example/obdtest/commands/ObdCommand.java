@@ -12,6 +12,8 @@
  */
 package com.example.obdtest.commands;
 
+import android.widget.Toast;
+
 import com.example.obdtest.exceptions.*;
 
 import java.io.IOException;
@@ -240,7 +242,7 @@ public abstract class ObdCommand {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
-
+//            Toast.makeText(, "command bug", Toast.LENGTH_LONG).show();
             if (messageError.isError(rawData)) {
                 throw messageError;
             }

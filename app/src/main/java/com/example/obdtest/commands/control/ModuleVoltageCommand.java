@@ -46,7 +46,7 @@ public class ModuleVoltageCommand extends ObdCommand {
         // ignore first two bytes [hh hh] of the response
         int a = buffer.get(2);
         int b = buffer.get(3);
-        voltage = (a * 256 + b) / 1000;
+        voltage = (float)(buffer.get(buffer.size() - 2) * 256 + buffer.get(buffer.size() - 1)) / 1000;
     }
 
     /** {@inheritDoc} */

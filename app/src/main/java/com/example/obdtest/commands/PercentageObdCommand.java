@@ -42,7 +42,7 @@ public abstract class PercentageObdCommand extends ObdCommand {
     @Override
     protected void performCalculations() {
         // ignore first two bytes [hh hh] of the response
-        percentage = (buffer.get(2) * 100.0f) / 255.0f;
+        percentage = (buffer.get(buffer.size() - 1) * 100.0f) / 255.0f;
     }
 
     /** {@inheritDoc} */

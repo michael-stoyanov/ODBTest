@@ -43,7 +43,7 @@ public class MassAirFlowCommand extends ObdCommand {
     @Override
     protected void performCalculations() {
         // ignore first two bytes [hh hh] of the response
-        maf = (buffer.get(2) * 256 + buffer.get(3)) / 100.0f;
+        maf = (buffer.get(buffer.size() - 2) * 256 + buffer.get(buffer.size() - 1)) / 100.0f;
     }
 
     /** {@inheritDoc} */

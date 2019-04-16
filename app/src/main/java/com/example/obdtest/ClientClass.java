@@ -14,6 +14,7 @@ public class ClientClass extends AsyncTask<Void, Void, Void> {
 
     public interface ObdCommandResponse {
         void getObdFormattedResponse(String response);
+
         void getObdRawResponse(String response);
     }
 
@@ -54,9 +55,9 @@ public class ClientClass extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected void onCancelled() {
+    protected void onPostExecute(Void aVoid) {
         obdResponse.getObdRawResponse(command.getResult());
-        obdResponse.getObdRawResponse(command.getFormattedResult());
+        obdResponse.getObdFormattedResponse(command.getFormattedResult());
     }
 }
 

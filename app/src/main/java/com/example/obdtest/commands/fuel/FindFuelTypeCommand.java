@@ -44,7 +44,7 @@ public class FindFuelTypeCommand extends ObdCommand {
     @Override
     protected void performCalculations() {
         // ignore first two bytes [hh hh] of the response
-        fuelType = buffer.get(2);
+        fuelType = buffer.get(buffer.size() - 1);
     }
 
     /** {@inheritDoc} */

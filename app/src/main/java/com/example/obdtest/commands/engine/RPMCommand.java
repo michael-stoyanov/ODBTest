@@ -42,8 +42,10 @@ public class RPMCommand extends ObdCommand {
     /** {@inheritDoc} */
     @Override
     protected void performCalculations() {
+        Integer b1 = buffer.get(buffer.size() - 2);
+        Integer b2 = buffer.get(buffer.size() - 1);
         // ignore first two bytes [41 0C] of the response((A*256)+B)/4
-        rpm = (buffer.get(2) * 256 + buffer.get(3)) / 4;
+        rpm = (buffer.get(buffer.size() - 2) * 256 + buffer.get(buffer.size() - 1)) / 4;
     }
 
     /** {@inheritDoc} */

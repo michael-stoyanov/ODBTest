@@ -43,7 +43,7 @@ public class RuntimeCommand extends ObdCommand {
     @Override
     protected void performCalculations() {
         // ignore first two bytes [01 0C] of the response
-        value = buffer.get(2) * 256 + buffer.get(3);
+        value = buffer.get(buffer.size() - 2) * 256 + buffer.get(buffer.size() - 1);
     }
 
     /** {@inheritDoc} */

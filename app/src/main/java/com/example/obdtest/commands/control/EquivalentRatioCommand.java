@@ -52,7 +52,7 @@ public class EquivalentRatioCommand extends PercentageObdCommand {
         // ignore first two bytes [hh hh] of the response
         int a = buffer.get(2);
         int b = buffer.get(3);
-        percentage = (a * 256 + b) / 32768;
+        percentage = (float)(buffer.get(buffer.size() - 2) * 256 + buffer.get(buffer.size() - 1)) / 32768;
     }
 
 

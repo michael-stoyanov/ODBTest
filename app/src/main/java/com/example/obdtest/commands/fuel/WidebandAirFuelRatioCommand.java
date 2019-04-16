@@ -36,7 +36,7 @@ public class WidebandAirFuelRatioCommand extends ObdCommand {
         // ignore first two bytes [01 44] of the response
         float A = buffer.get(2);
         float B = buffer.get(3);
-        wafr = (((A * 256) + B) / 32768) * 14.7f;//((A*256)+B)/32768
+        wafr = (((float)(buffer.get(buffer.size() - 2) * 256) + buffer.get(buffer.size() - 1)) / 32768) * 14.7f;//((A*256)+B)/32768
     }
 
     /** {@inheritDoc} */

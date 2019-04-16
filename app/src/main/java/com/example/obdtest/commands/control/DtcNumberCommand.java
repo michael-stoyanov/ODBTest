@@ -49,7 +49,7 @@ public class DtcNumberCommand extends ObdCommand {
     @Override
     protected void performCalculations() {
         // ignore first two bytes [hh hh] of the response
-        final int mil = buffer.get(2);
+        final int mil = buffer.get(buffer.get(buffer.size() - 1));
         milOn = (mil & 0x80) == 128;
         codeCount = mil & 0x7F;
     }

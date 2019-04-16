@@ -23,6 +23,7 @@ import com.example.obdtest.commands.control.VinCommand;
 import com.example.obdtest.commands.engine.OilTempCommand;
 import com.example.obdtest.commands.engine.RPMCommand;
 import com.example.obdtest.commands.engine.ThrottlePositionCommand;
+import com.example.obdtest.commands.temperature.EngineCoolantTemperatureCommand;
 
 import java.net.InetAddress;
 import java.net.Socket;
@@ -236,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.oilTemp:
                     try {
-                        task = new ClientClass(new OilTempCommand(), new ClientClass.ObdCommandResponse() {
+                        task = new ClientClass(new EngineCoolantTemperatureCommand(), new ClientClass.ObdCommandResponse() {
                             @Override
                             public void getObdFormattedResponse(String response) {
                                 result_text.setText(response);
@@ -256,15 +257,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     try {
                         task = new ClientClass(new RPMCommand(), new ClientClass.ObdCommandResponse() {
                             @Override
-                            public void getObdFormattedResponse(String response) {
-                                result_text.setText(response);
-                            }
-
-                            @Override
                             public void getObdRawResponse(String response) {
                                 result_raw_text.setText(response);
                             }
 
+                            @Override
+                            public void getObdFormattedResponse(String response) {
+                                result_text.setText(response);
+                            }
                         }).execute();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -277,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Something went wrong! Better luck next time!", Toast.LENGTH_SHORT).show();
         }
 
-        task.cancel(true);
+        //task.cancel(true);
     }
 
     public InetAddress intToInetAddress(int hostAddress) {
