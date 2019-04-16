@@ -64,13 +64,13 @@
         android:text="@string/currVoltage" />
 
     <Button
-        android:id="@+id/oilTemp"
+        android:id="@+id/waterTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@+id/currVoltage"
         android:layout_toRightOf="@+id/currVoltage"
         android:layout_below="@id/result_text"
-        android:text="@string/oilTemp" />
+        android:text="@string/waterTemp" />
 
     <Button
         android:id="@+id/rpm"
@@ -78,11 +78,76 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/vinNo"
         android:text="@string/rpm" />
+    <!-- ==================== more commands for testing ====================== -->
 
-    <ListView
-        android:id="@+id/wifi_networks_listView"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/colorPrimary" />
+    <Button
+        android:id="@+id/timingAdvance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/rpm"
+        android:layout_toRightOf="@+id/rpm"
+        android:layout_below="@id/vinNo"
+        android:text="@string/timingAdvance" />
+
+    <Button
+        android:id="@+id/engineLoad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/timingAdvance"
+        android:layout_toRightOf="@+id/timingAdvance"
+        android:layout_below="@id/vinNo"
+        android:text="@string/load" />
+
+    <Button
+        android:id="@+id/absEngLoad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/engineLoad"
+        android:layout_toRightOf="@+id/engineLoad"
+        android:layout_below="@id/vinNo"
+        android:text="@string/absLoad" />
+
+    <!-- ==================== more commands for testing ====================== -->
+
+
+    <Button
+        android:id="@+id/maf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rpm"
+        android:text="@string/maf" />
+
+    <Button
+        android:id="@+id/lambda"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/maf"
+        android:layout_toRightOf="@+id/maf"
+        android:layout_below="@id/rpm"
+        android:text="@string/lambda" />
+
+    <Button
+        android:id="@+id/fuelType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/lambda"
+        android:layout_toRightOf="@+id/lambda"
+        android:layout_below="@id/rpm"
+        android:text="@string/fuelType" />
+
+    <Button
+        android:id="@+id/fuelLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/fuelType"
+        android:layout_toRightOf="@+id/fuelType"
+        android:layout_below="@id/rpm"
+        android:text="@string/fuelLevel" />
+
+    <!--<ListView-->
+        <!--android:id="@+id/wifi_networks_listView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="200dp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:background="@color/colorPrimary" />-->
 </RelativeLayout>

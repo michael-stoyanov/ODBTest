@@ -18,15 +18,21 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.obdtest.commands.ObdCommand;
 import com.example.obdtest.commands.control.ModuleVoltageCommand;
+import com.example.obdtest.commands.control.TimingAdvanceCommand;
 import com.example.obdtest.commands.control.VinCommand;
-import com.example.obdtest.commands.engine.OilTempCommand;
+import com.example.obdtest.commands.engine.AbsoluteLoadCommand;
+import com.example.obdtest.commands.engine.LoadCommand;
+import com.example.obdtest.commands.engine.MassAirFlowCommand;
 import com.example.obdtest.commands.engine.RPMCommand;
 import com.example.obdtest.commands.engine.ThrottlePositionCommand;
+import com.example.obdtest.commands.fuel.AirFuelRatioCommand;
+import com.example.obdtest.commands.fuel.FindFuelTypeCommand;
+import com.example.obdtest.commands.fuel.FuelLevelCommand;
 import com.example.obdtest.commands.temperature.EngineCoolantTemperatureCommand;
 
 import java.net.InetAddress;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -44,11 +50,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     Button vinNoCommand;
     Button throttlePosCommand;
-
     Button currVoltageCommand;
-    Button oilCommand;
+    Button waterTempCommand;
 
     Button rpmCommand;
+    Button timeAdvance;
+    Button engineLoad;
+    Button engineAbsLoad;
+
+    Button maf;
+    Button lambda;
+    Button fuelType;
+    Button fuelLevel;
 
     //    Button vLinkConnect;
 
@@ -97,16 +110,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         vinNoCommand = (Button) findViewById(R.id.vinNo);
         throttlePosCommand = (Button) findViewById(R.id.throttlePos);
-
         currVoltageCommand = (Button) findViewById(R.id.currVoltage);
-        oilCommand = (Button) findViewById(R.id.oilTemp);
+        waterTempCommand = (Button) findViewById(R.id.waterTemp);
 
         rpmCommand = (Button) findViewById(R.id.rpm);
+        timeAdvance = (Button) findViewById(R.id.timingAdvance);
+        engineLoad = (Button) findViewById(R.id.engineLoad);
+        engineAbsLoad = (Button) findViewById(R.id.absEngLoad);
+        maf = (Button) findViewById(R.id.maf);
+        lambda = (Button) findViewById(R.id.lambda);
+        fuelType = (Button) findViewById(R.id.fuelType);
+        fuelLevel = (Button) findViewById(R.id.fuelLevel);
 
-//        vLinkConnect = (Button) findViewById(R.id.VLinkConnect);
         setOnClickListeners();
-
-        task = new ClientClass();
     }
 
     public void setOnClickListeners() {
@@ -114,13 +130,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 //        wifiManager_scan.setOnClickListener(this);
 
-        rpmCommand.setOnClickListener(this);
         vinNoCommand.setOnClickListener(this);
-
         throttlePosCommand.setOnClickListener(this);
         currVoltageCommand.setOnClickListener(this);
+        waterTempCommand.setOnClickListener(this);
 
-        oilCommand.setOnClickListener(this);
+        rpmCommand.setOnClickListener(this);
+        timeAdvance.setOnClickListener(this);
+        engineLoad.setOnClickListener(this);
+        engineAbsLoad.setOnClickListener(this);
+
+        maf.setOnClickListener(this);
+        lambda.setOnClickListener(this);
+        fuelType.setOnClickListener(this);
+        fuelLevel.setOnClickListener(this);
 
 //        networks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
@@ -181,91 +204,84 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    break;
                 case R.id.vinNo:
                     try {
-                        task = new ClientClass(new VinCommand(), new ClientClass.ObdCommandResponse() {
-                            @Override
-                            public void getObdFormattedResponse(String response) {
-                                result_text.setText(response);
-                            }
-
-                            @Override
-                            public void getObdRawResponse(String response) {
-                                result_raw_text.setText(response);
-                            }
-                        }).execute();
-
+                        executeCommand(new VinCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     break;
-//                case R.id.sendVinNoCommand:
-//                    break;
                 case R.id.throttlePos:
                     try {
-                        task = new ClientClass(new ThrottlePositionCommand(), new ClientClass.ObdCommandResponse() {
-                            @Override
-                            public void getObdFormattedResponse(String response) {
-                                result_text.setText(response);
-                            }
-
-                            @Override
-                            public void getObdRawResponse(String response) {
-                                result_raw_text.setText(response);
-                            }
-                        }).execute();
-
+                        executeCommand(new ThrottlePositionCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     break;
                 case R.id.currVoltage:
                     try {
-                        task = new ClientClass(new ModuleVoltageCommand(), new ClientClass.ObdCommandResponse() {
-                            @Override
-                            public void getObdFormattedResponse(String response) {
-                                result_text.setText(response);
-                            }
-
-                            @Override
-                            public void getObdRawResponse(String response) {
-                                result_raw_text.setText(response);
-                            }
-                        }).execute();
-
+                        executeCommand(new ModuleVoltageCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     break;
-                case R.id.oilTemp:
+                case R.id.waterTemp:
                     try {
-                        task = new ClientClass(new EngineCoolantTemperatureCommand(), new ClientClass.ObdCommandResponse() {
-                            @Override
-                            public void getObdFormattedResponse(String response) {
-                                result_text.setText(response);
-                            }
-
-                            @Override
-                            public void getObdRawResponse(String response) {
-                                result_raw_text.setText(response);
-                            }
-                        }).execute();
-
+                        executeCommand(new EngineCoolantTemperatureCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     break;
                 case R.id.rpm:
                     try {
-                        task = new ClientClass(new RPMCommand(), new ClientClass.ObdCommandResponse() {
-                            @Override
-                            public void getObdRawResponse(String response) {
-                                result_raw_text.setText(response);
-                            }
-
-                            @Override
-                            public void getObdFormattedResponse(String response) {
-                                result_text.setText(response);
-                            }
-                        }).execute();
+                        executeCommand(new RPMCommand());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.timingAdvance:
+                    try {
+                        executeCommand(new TimingAdvanceCommand());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.engineLoad:
+                    try {
+                        executeCommand(new LoadCommand());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.absEngLoad:
+                    try {
+                        executeCommand(new AbsoluteLoadCommand());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.maf:
+                    try {
+                        executeCommand(new MassAirFlowCommand());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.lambda:
+                    try {
+                        executeCommand(new AirFuelRatioCommand());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.fuelType:
+                    try {
+                        executeCommand(new FindFuelTypeCommand());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.fuelLevel:
+                    try {
+                        executeCommand(new FuelLevelCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -278,6 +294,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         //task.cancel(true);
+    }
+
+    private void executeCommand(ObdCommand obdCommand) {
+        task = new ClientClass(obdCommand, new ClientClass.ObdCommandResponse() {
+            @Override
+            public void getObdRawResponse(String response) {
+                result_raw_text.setText(response);
+            }
+
+            @Override
+            public void getObdFormattedResponse(String response) {
+                result_text.setText(response);
+            }
+        }).execute();
     }
 
     public InetAddress intToInetAddress(int hostAddress) {
