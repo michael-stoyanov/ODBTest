@@ -28,17 +28,24 @@ public class ClientClass extends AsyncTask<Void, Void, Void> {
     ClientClass(ObdCommand command, ObdCommandResponse obdCommandResponse) {
         this.obdResponse = obdCommandResponse;
         this.command = command;
+
+        try {
+            this.socket = new Socket("192.168.0.10", 35000);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
         try {
-            socket = new Socket("192.168.0.10", 35000);
+            while (!isCancelled()) {
+                OutputStream mBufferOut = socket.getOutputStream();
+                InputStream mBufferIn = socket.getInputStream();
 
-            OutputStream mBufferOut = socket.getOutputStream();
-            InputStream mBufferIn = socket.getInputStream();
-
-            command.run(mBufferIn, mBufferOut);
+                command.run(mBufferIn, mBufferOut);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -56,6 +63,12 @@ public class ClientClass extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
+        obdResponse.getObdRawResponse(command.getResult());
+        obdResponse.getObdFormattedResponse(command.getFormattedResult());
+    }
+
+    @Override
+    protected void onCancelled() {
         obdResponse.getObdRawResponse(command.getResult());
         obdResponse.getObdFormattedResponse(command.getFormattedResult());
     }

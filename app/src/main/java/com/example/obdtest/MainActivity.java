@@ -123,6 +123,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fuelLevel = (Button) findViewById(R.id.fuelLevel);
 
         setOnClickListeners();
+
+        VLinkConnect();
     }
 
     public void setOnClickListeners() {
@@ -166,18 +168,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        });
     }
 
-    //    private void VLinkConnect() {
-//        wifiConfig = new WifiConfiguration();
-//
-//        wifiConfig.SSID = "V-Link";
-//        wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-//
-//        int inetId = wifiManager.addNetwork(wifiConfig);
-//
-//        wifiManager.disconnect();
-//        wifiManager.enableNetwork(inetId, true);
-//        wifiManager.reconnect();
-//    }
+        private void VLinkConnect() {
+        wifiConfig = new WifiConfiguration();
+
+        wifiConfig.SSID = "V-Link";
+        wifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+
+        int inetId = wifiManager.addNetwork(wifiConfig);
+
+        wifiManager.enableNetwork(inetId, true);
+        wifiManager.reconnect();
+    }
 //
 //    @SuppressWarnings("deprecation")
 //    public void scanWifi() {
@@ -211,6 +212,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.throttlePos:
                     try {
+                        if (task != null)
+                            task.cancel(true);
+
                         executeCommand(new ThrottlePositionCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -218,6 +222,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.currVoltage:
                     try {
+                        if (task != null)
+                            task.cancel(true);
+
                         executeCommand(new ModuleVoltageCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -225,6 +232,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.waterTemp:
                     try {
+                        if (task != null)
+                            task.cancel(true);
+
                         executeCommand(new EngineCoolantTemperatureCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -232,6 +242,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.rpm:
                     try {
+                        if (task != null)
+                            task.cancel(true);
+
                         executeCommand(new RPMCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -239,6 +252,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.timingAdvance:
                     try {
+                        if (task != null)
+                            task.cancel(true);
+
                         executeCommand(new TimingAdvanceCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -246,6 +262,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.engineLoad:
                     try {
+                        if (task != null)
+                            task.cancel(true);
+
                         executeCommand(new LoadCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -253,6 +272,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.absEngLoad:
                     try {
+                        if (task != null)
+                            task.cancel(true);
+
                         executeCommand(new AbsoluteLoadCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -260,6 +282,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.maf:
                     try {
+                        if (task != null)
+                            task.cancel(true);
+
                         executeCommand(new MassAirFlowCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -267,6 +292,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.lambda:
                     try {
+                        if (task != null)
+                            task.cancel(true);
+
                         executeCommand(new AirFuelRatioCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -292,8 +320,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
             Toast.makeText(this, "Something went wrong! Better luck next time!", Toast.LENGTH_SHORT).show();
         }
-
-        //task.cancel(true);
     }
 
     private void executeCommand(ObdCommand obdCommand) {
