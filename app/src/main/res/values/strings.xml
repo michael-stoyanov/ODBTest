@@ -19,4 +19,6 @@
     <string name="fuelType">FuelType</string>
     <string name="fuelLevel">FuelLevel</string>
 
+    <string name="vehicleSpeed">Speed</string>
+
 </resources>

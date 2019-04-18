@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.obdtest.commands.ObdCommand;
+import com.example.obdtest.commands.SpeedCommand;
 import com.example.obdtest.commands.control.ModuleVoltageCommand;
 import com.example.obdtest.commands.control.TimingAdvanceCommand;
 import com.example.obdtest.commands.control.VinCommand;
@@ -30,7 +31,14 @@ import com.example.obdtest.commands.engine.ThrottlePositionCommand;
 import com.example.obdtest.commands.fuel.AirFuelRatioCommand;
 import com.example.obdtest.commands.fuel.FindFuelTypeCommand;
 import com.example.obdtest.commands.fuel.FuelLevelCommand;
+import com.example.obdtest.commands.protocol.EchoOffCommand;
+import com.example.obdtest.commands.protocol.HeadersOffCommand;
+import com.example.obdtest.commands.protocol.LineFeedOffCommand;
+import com.example.obdtest.commands.protocol.ObdResetCommand;
+import com.example.obdtest.commands.protocol.SelectProtocolCommand;
+import com.example.obdtest.commands.protocol.SpacesOffCommand;
 import com.example.obdtest.commands.temperature.EngineCoolantTemperatureCommand;
+import com.example.obdtest.enums.ObdProtocols;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -62,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button lambda;
     Button fuelType;
     Button fuelLevel;
+
+    Button vehicleSpeed;
 
     //    Button vLinkConnect;
 
@@ -122,9 +132,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fuelType = (Button) findViewById(R.id.fuelType);
         fuelLevel = (Button) findViewById(R.id.fuelLevel);
 
+        vehicleSpeed= (Button) findViewById(R.id.vehicleSpeed);
+
         setOnClickListeners();
 
         VLinkConnect();
+
+        prepareObdCommunication();
+    }
+
+    private void prepareObdCommunication(){
+
+        // ATZ
+        executeCommand(new ObdResetCommand());
+        // AT E0
+        executeCommand(new EchoOffCommand());
+        // AT L)0
+        executeCommand(new LineFeedOffCommand());
+        // AT S)0
+        executeCommand(new SpacesOffCommand());
+        // AT H)0
+        executeCommand(new HeadersOffCommand());
+        // AT SP 0
+        executeCommand(new SelectProtocolCommand(ObdProtocols.AUTO));
     }
 
     public void setOnClickListeners() {
@@ -147,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fuelType.setOnClickListener(this);
         fuelLevel.setOnClickListener(this);
 
+        vehicleSpeed.setOnClickListener(this);
 //        networks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
 //            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -179,15 +210,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         wifiManager.enableNetwork(inetId, true);
         wifiManager.reconnect();
     }
-//
+
 //    @SuppressWarnings("deprecation")
 //    public void scanWifi() {
 //        registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 //
 //        wifiManager.startScan();
 //        Toast.makeText(this, "Scanning .....", Toast.LENGTH_LONG).show();
-//    }
 //        IPaddress = intToInetAddress(wifiManager.getDhcpInfo().serverAddress).getHostAddress();
+//    }
+
     @Override
     public void onClick(View btn) {
 
@@ -212,9 +244,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.throttlePos:
                     try {
-                        if (task != null)
-                            task.cancel(true);
-
                         executeCommand(new ThrottlePositionCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -222,9 +251,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.currVoltage:
                     try {
-                        if (task != null)
-                            task.cancel(true);
-
                         executeCommand(new ModuleVoltageCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -232,9 +258,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.waterTemp:
                     try {
-                        if (task != null)
-                            task.cancel(true);
-
                         executeCommand(new EngineCoolantTemperatureCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -242,9 +265,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.rpm:
                     try {
-                        if (task != null)
-                            task.cancel(true);
-
                         executeCommand(new RPMCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -252,9 +272,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.timingAdvance:
                     try {
-                        if (task != null)
-                            task.cancel(true);
-
                         executeCommand(new TimingAdvanceCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -262,9 +279,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.engineLoad:
                     try {
-                        if (task != null)
-                            task.cancel(true);
-
                         executeCommand(new LoadCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -272,9 +286,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.absEngLoad:
                     try {
-                        if (task != null)
-                            task.cancel(true);
-
                         executeCommand(new AbsoluteLoadCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -282,9 +293,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.maf:
                     try {
-                        if (task != null)
-                            task.cancel(true);
-
                         executeCommand(new MassAirFlowCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -292,9 +300,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case R.id.lambda:
                     try {
-                        if (task != null)
-                            task.cancel(true);
-
                         executeCommand(new AirFuelRatioCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -310,6 +315,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case R.id.fuelLevel:
                     try {
                         executeCommand(new FuelLevelCommand());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.vehicleSpeed:
+                    try {
+                        executeCommand(new SpeedCommand());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -336,18 +348,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).execute();
     }
 
-    public InetAddress intToInetAddress(int hostAddress) {
-        byte[] addressBytes = {(byte) (0xff & hostAddress),
-                (byte) (0xff & (hostAddress >> 8)),
-                (byte) (0xff & (hostAddress >> 16)),
-                (byte) (0xff & (hostAddress >> 24))};
-
-        try {
-            return InetAddress.getByAddress(addressBytes);
-        } catch (UnknownHostException e) {
-            throw new AssertionError();
-        }
-    }
+//    public InetAddress intToInetAddress(int hostAddress) {
+//        byte[] addressBytes = {(byte) (0xff & hostAddress),
+//                (byte) (0xff & (hostAddress >> 8)),
+//                (byte) (0xff & (hostAddress >> 16)),
+//                (byte) (0xff & (hostAddress >> 24))};
+//
+//        try {
+//            return InetAddress.getByAddress(addressBytes);
+//        } catch (UnknownHostException e) {
+//            throw new AssertionError();
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

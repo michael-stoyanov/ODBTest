@@ -144,6 +144,17 @@
         android:layout_below="@id/rpm"
         android:text="@string/fuelLevel" />
 
+    <!--====================================================-->
+
+
+    <Button
+        android:id="@+id/vehicleSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/maf"
+        android:text="@string/vehicleSpeed" />
+
+
     <!--<ListView-->
         <!--android:id="@+id/wifi_networks_listView"-->
         <!--android:layout_width="match_parent"-->
